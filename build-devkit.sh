@@ -267,7 +267,7 @@ if [ $VERSION -eq 3 ]; then
 fi
 
 if [ $VERSION -eq 4 ]; then
-	gitrepos="git://github.com/brijohn/libdataplus.git:$LIBDATAPLUS_VER git://github.com/brijohn/elf2d01.git:$ELF2D01_VER"
+	gitrepos="https://github.com/brijohn/libdataplus.git:$LIBDATAPLUS_VER https://github.com/brijohn/elf2d01.git:$ELF2D01_VER"
 	hostarchives="general-tools-$GENERAL_TOOLS_VER.tar.bz2"
 fi
 
