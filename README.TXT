@@ -110,7 +110,8 @@ the multi-threaded microkernel for gamecube, -mrvl for wii, -mwup for wii u.
 Using devkitSH4
 ---------------
 
-to create add-ons for exword electronic dictionaries use he command line switch -mexword to use the builtin crt0 and linkscript
+to create add-ons for exword electronic dictionaries use the command line switch
+-mexword to use the builtin crt0 and linkscript.
 
 Getting started
 ---------------

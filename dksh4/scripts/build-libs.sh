@@ -9,6 +9,3 @@ then
 	touch installed
 fi
 
-
-
-

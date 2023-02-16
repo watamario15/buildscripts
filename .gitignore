@@ -1,7 +1,8 @@
-config.sh
 .devkitARM*
 .devkitPPC*
 .devkitA64*
+.devkitSH4*
 *.gz
 *.bz2
+*.xz
 *~

@@ -12,13 +12,13 @@
 #   3: devkitA64
 #   4: devkitSH4
 #---------------------------------------------------------------------------------
-BUILD_DKPRO_PACKAGE=0
+BUILD_DKPRO_PACKAGE=4
 
 #---------------------------------------------------------------------------------
 # Toolchain installation directory, comment if not specified
 #---------------------------------------------------------------------------------
-#BUILD_DKPRO_INSTALLDIR=/opt/devkitpro
-#BUILD_DKPRO_INSTALLDIR=c:/devkitPro
+BUILD_DKPRO_INSTALLDIR=/opt/exword
+#BUILD_DKPRO_INSTALLDIR=c:/exword
 
 #---------------------------------------------------------------------------------
 # Path to previously downloaded source packages, comment if not specified
@@ -28,8 +28,7 @@ BUILD_DKPRO_PACKAGE=0
 #---------------------------------------------------------------------------------
 # MAKEFLAGS for building - use number of processors for jobs
 #---------------------------------------------------------------------------------
-#numcores=`getconf _NPROCESSORS_ONLN`
-#export MAKEFLAGS="$MAKEFLAGS -j${numcores}"
+export MAKEFLAGS="$MAKEFLAGS -j$(nproc)"
 
 #---------------------------------------------------------------------------------
 # Uncomment to skip building of tools
@@ -47,7 +46,7 @@ BUILD_DKPRO_PACKAGE=0
 #  0: Ask to delete build folders & patched sources
 #  1: Use defaults, don't pause for answers
 #---------------------------------------------------------------------------------
-BUILD_DKPRO_AUTOMATED=0
+BUILD_DKPRO_AUTOMATED=1
 
 #---------------------------------------------------------------------------------
 # set OSX SDK path if needed

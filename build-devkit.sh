@@ -75,10 +75,9 @@ OSXMIN=${OSXMIN:-10.9}
 function git_clone_project {
 #---------------------------------------------------------------------------------
 	name=$(echo $1 | sed -e 's/.*\/\([^/]*\)\.git/\1/' )
-	if [ ! -f cloned-$name ]; then
+	if [ ! -d $name-$2 ]; then
 		echo "cloning $name"
 		git clone $1 -b $2 $name-$2 || { echo "Error cloning $name"; exit 1; }
-		touch cloned-$name
 	fi
 }
 
@@ -267,7 +266,6 @@ if [ $VERSION -eq 3 ]; then
 fi
 
 if [ $VERSION -eq 4 ]; then
-	gitrepos="https://github.com/brijohn/libdataplus.git:$LIBDATAPLUS_VER https://github.com/brijohn/elf2d01.git:$ELF2D01_VER"
 	hostarchives="general-tools-$GENERAL_TOOLS_VER.tar.bz2"
 fi
 
@@ -278,6 +276,12 @@ else
 fi
 
 cd "$SRCDIR"
+if [ ! -f gcc-${GCC_VER}.tar.xz ]; then
+	$FETCH https://gcc.gnu.org/pub/gcc/releases/gcc-${GCC_VER}/gcc-${GCC_VER}.tar.xz || { echo "Error: Failed to download gcc-${GCC_VER}.tar.xz"; exit 1; }
+fi
+if [ ! -f newlib-${NEWLIB_VER}.tar.gz ]; then
+	$FETCH ftp://sourceware.org/pub/newlib/newlib-${NEWLIB_VER}.tar.gz || { echo "Error: Failed to download newlib-${NEWLIB_VER}.tar.gz"; exit 1; }
+fi
 for archive in $archives $targetarchives $hostarchives
 do
 	echo $archive
@@ -290,20 +294,37 @@ cd $BUILDSCRIPTDIR
 mkdir -p $BUILDDIR
 cd $BUILDDIR
 
-for repo in $gitrepos
-do
-	url=$(echo $repo | sed -e 's/\(.*\/[^/]*\.git\).*/\1/' )
-	branch=$(echo $repo | sed -e 's/.*\/[^/]*\.git:\(.*\)/\1/' )
-	git_clone_project $url $branch
-done
-
 extract_and_patch binutils $BINUTILS_VER xz
 extract_and_patch gcc $GCC_VER xz
 extract_and_patch newlib $NEWLIB_VER gz
 extract_and_patch gdb $GDB_VER xz
 
+if [ ! -d gcc-${GCC_VER}/gmp ]; then
+	curl -fL ftp://gcc.gnu.org/pub/gcc/infrastructure/gmp-6.2.1.tar.bz2 | tar xjf - -C gcc-${GCC_VER}
+	[ "${PIPESTATUS[0]}" -eq 0 ] || { echo "Error: Failed to download GMP"; exit 1; }
+	mv gcc-${GCC_VER}/gmp-6.2.1 gcc-${GCC_VER}/gmp
+fi
+if [ ! -d gcc-${GCC_VER}/mpfr ]; then
+	curl -fL ftp://gcc.gnu.org/pub/gcc/infrastructure/mpfr-4.1.0.tar.bz2 | tar xjf - -C gcc-${GCC_VER}
+	[ "${PIPESTATUS[0]}" -eq 0 ] || { echo "Error: Failed to download MPFR"; exit 1; }
+	mv gcc-${GCC_VER}/mpfr-4.1.0 gcc-${GCC_VER}/mpfr
+fi
+if [ ! -d gcc-${GCC_VER}/mpc ]; then
+	curl -fL ftp://gcc.gnu.org/pub/gcc/infrastructure/mpc-1.2.1.tar.gz | tar xzf - -C gcc-${GCC_VER}
+	[ "${PIPESTATUS[0]}" -eq 0 ] || { echo "Error: Failed to download MPC"; exit 1; }
+	mv gcc-${GCC_VER}/mpc-1.2.1 gcc-${GCC_VER}/mpc
+fi
+
 if [ $VERSION -eq 2 ]; then
 	extract_and_patch binutils $MN_BINUTILS_VER bz2
+fi
+
+if [ $VERSION -eq 4 ]; then
+	git_clone_project https://github.com/brijohn/libdataplus.git $LIBDATAPLUS_VER
+	git_clone_project https://github.com/brijohn/elf2d01.git $ELF2D01_VER
+	cd elf2d01-$ELF2D01_VER
+	autoreconf -f -i
+	cd $BUILDDIR
 fi
 
 for archive in $targetarchives
